@@ -1,7 +1,10 @@
 import { useState } from "react";
 import "./App.css";
-import  NewTodoForm  from "./components/NewTodoForm.js";
+import NewTodoForm from "./components/NewTodoForm.js";
 import { TodoList } from "./components/ToDoList.js";
+import addToCart from "./components/Cart/AddToCart.js";
+import Products from "./components/Product/Products.js";
+import CartContext from "./components/Context/CartContext.js";
 function App() {
   const [todos, setTodos] = useState([]);
 
@@ -9,7 +12,7 @@ function App() {
     setTodos((currentTodos) => {
       return [
         ...currentTodos,
-        { id: crypto.randomUUID(), title, completed: false },
+        { id: crypto.randomUUID(), title, completed: false }
       ];
     });
   }
@@ -32,21 +35,43 @@ function App() {
   }
 
   console.log(todos);
+  let [cart, setCart] = useState({});
 
-  let [increase, setIncrease] = useState(0);
-  let [decrease, setDecrease] = useState(0);
-  function increament() {
-    setIncrease(increase + 1);
+  function increment(product) {
+    const newCart = { ...cart };
+    // here we are changing the reference of the object so that react can detect the change and re-render the component
+
+    if (!newCart[product.id]) {
+      newCart[product.id] = {
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        quantity: 1
+      };
+    } else {
+      newCart[product.id].quantity++;
+    }
+    setCart(newCart);
+    // here we are again changing the reference to re-render the component
   }
-  function decreament() {
-    setDecrease(decrease - 1);
-  } 
+  function decrement(product) {
+    if (!newCart[product.id]) {
+      return;
+    }
+    const newCart = { ...cart };
+    newCart[product.id].quantity -= 1;
+    if (newCart[product.id].quantity == 0) {
+      delete newCart[product.id];
+    }
+  }
 
   return (
     <>
-      <NewTodoForm onSubmit={addTodo} />
-      <h1 className="header">Todo List</h1>
-      <TodoList todos={todos}/>
+     <CartContext.Provider value={{ cart, increment, decrement}}>
+      <div className="App">
+      <Products cart={cart} increment={increment} decrement={decrement} />
+      </div>
+    </CartContext.Provider>
     </>
   );
 }
