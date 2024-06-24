@@ -1,79 +1,60 @@
-import { useState } from "react";
-import "./App.css";
-import NewTodoForm from "./components/NewTodoForm.js";
-import { TodoList } from "./components/ToDoList.js";
-import addToCart from "./components/Cart/AddToCart.js";
-import Products from "./components/Product/Products.js";
-import CartContext from "./components/Context/CartContext.js";
+import './App.css';
+import { a, b } from './components/Products/Products';
+import Products from './components/Products/Products';
+import { useState } from 'react';
+import CartContext from './context/CartContext';
 function App() {
-  const [todos, setTodos] = useState([]);
-
-  function addTodo(title) {
-    setTodos((currentTodos) => {
-      return [
-        ...currentTodos,
-        { id: crypto.randomUUID(), title, completed: false }
-      ];
-    });
-  }
-
-  function toggleTodo(id, completed) {
-    setTodos((currentTodos) => {
-      return currentTodos.map((todo) => {
-        if (todo.id === id) {
-          return { ...todo, completed };
-        }
-        return todo;
-      });
-    });
-  }
-
-  function deleteTodo(id) {
-    setTodos((currentTodos) => {
-      return currentTodos.filter((todo) => todo.id !== id);
-    });
-  }
-
-  console.log(todos);
+  // state variably
+  
+  // inc
+  // dec
   let [cart, setCart] = useState({});
-
-  function increment(product) {
+  function increaseQuantity(product) {
     const newCart = { ...cart };
-    // here we are changing the reference of the object so that react can detect the change and re-render the component
-
+    // if(cart[product.id])
     if (!newCart[product.id]) {
       newCart[product.id] = {
-        id: product.id,
-        title: product.title,
-        price: product.price,
-        quantity: 1
+        ...product,
+        quantity: 0
       };
-    } else {
-      newCart[product.id].quantity++;
     }
+    newCart[product.id].quantity += 1;
+    console.log(newCart);
     setCart(newCart);
-    // here we are again changing the reference to re-render the component
-  }
-  function decrement(product) {
-    if (!newCart[product.id]) {
-      return;
-    }
-    const newCart = { ...cart };
-    newCart[product.id].quantity -= 1;
-    if (newCart[product.id].quantity == 0) {
-      delete newCart[product.id];
-    }
   }
 
+  function decreaseQuantity(product) {
+    const newCart = { ...cart };
+    if (!newCart[product.id]) return;
+    newCart[product.id].quantity -= 1;
+    if (newCart[product.id].quantity <= 0) {
+      delete newCart[product.id];
+    }
+    setCart(newCart);
+  }
+
+  console.log(a, b);
   return (
-    <>
-     <CartContext.Provider value={{ cart, increment, decrement}}>
+    <CartContext.Provider value={{ cart, increaseQuantity, decreaseQuantity}}>
       <div className="App">
-      <Products cart={cart} increment={increment} decrement={decrement} />
+        <Products cart={cart} increaseQuantity={increaseQuantity} decreaseQuantity={decreaseQuantity} />
       </div>
     </CartContext.Provider>
-    </>
   );
 }
 
 export default App;
+
+// {1:{id: 1, quantity: 11}, 2:{id: 2, quantity: 10}, 3:{id: 3, quantity: 10}, 4:{id: 4, quantity: 10}}
+
+// button
+// - 1 +
+
+// let a = {b:10, c:20};
+//a.b = 30;
+// let b = {...a};
+
+// a => 1234
+// a => 12
+
+// {cart: cart, increaseQuantity: increaseQuantity}
