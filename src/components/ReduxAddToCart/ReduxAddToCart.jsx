@@ -1,15 +1,22 @@
-import { useContext } from "react";
-import CartContext from "../../context/CartContext";
-function AddToCart({ product }) {
-    console.log("add to cart", product.id)
-    const { cart, increaseQuantity, decreaseQuantity } = useContext(CartContext);
+import { useSelector, useDispatch } from "react-redux";
+import { addToCart, removeFromCart } from "../../store.js";
+function ReduxAddToCart({ product }) {
+    console.log("add to cart", product.id);
+    // useSelector
+    let dispatch = useDispatch();
     function increase() {
-        increaseQuantity(product);
+        //dispatch({type: , payload: })
+        dispatch(addToCart(product));
     }
     function decrease() {
-        decreaseQuantity(product);
+     //dispatch({type: , payload: })
+     dispatch(removeFromCart(product));
     }
-    const quantity = cart[product.id] ? cart[product.id].quantity : 0;
+
+    let quantity = useSelector((state) => {
+        return state.cart.items[product.id]?.quantity || 0;
+    })
+
     if (quantity === 0) {
         return (
             <div>
@@ -22,14 +29,11 @@ function AddToCart({ product }) {
                 <button onClick={decrease}>-</button>
                 <span>{quantity}</span>
                 <button onClick={increase}>+</button>
-
             </div>
         )
     }
-
 }
-
-export default AddToCart;
+export default ReduxAddToCart;
 
 
 // array of object 
