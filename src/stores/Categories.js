@@ -1,6 +1,6 @@
 export function loadCategories() {
     return (dispatch) => {
-        fetch('https://fakestoreapi.com/products/categories').then(
+        fetch('https://mocki.io/v1/3696c3c4-4e95-496d-bdb6-24843dca0257').then(
             (res) => {
                 return res.json();
             }
